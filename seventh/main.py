@@ -13,6 +13,7 @@ hero = Hero(WIDTH / 2, 700, 'hero')
 enemys = []
 score = 0
 end = False
+speed = 1
 
 
 def init():
@@ -67,11 +68,16 @@ def on_key_down(key):
 
 
 def createEnemys():
+    global speed
     if end:
         return
-    enemy = Enemy(random.randint(0, WIDTH), -10, 'enemy', 1, 1)
-    if not score == 0 and score % 10 == 0:
-        enemy = Enemy(random.randint(0, WIDTH), -10, 'enemy2', 2, 5)
+    enemy = Enemy(random.randint(0, WIDTH), -10, 'enemy', speed, 1)
+    if not score == 0 and score % 5 == 0:
+        enemy = Enemy(random.randint(0, WIDTH), -10, 'enemy2', speed + 1, 5)
+        if speed <= 5:
+            speed += 1
+        enemys.append(enemy)
+
     enemys.append(enemy)
     clock.schedule_unique(createEnemys, 1)
 
@@ -87,15 +93,18 @@ def checkHitEnemys():
     if end:
         return
     global score
-    for bullet in hero.bullets:
-        for enemy in enemys:
-            if bullet.colliderect(enemy.actor):
-                enemy.life -= 1
-                if enemy.life <= 0:
-                    enemy.actor.image = 'boom'
-                sounds.explode.play()
-                hero.bullets.remove(bullet)
-                score += 1
+    try:
+        for bullet in hero.bullets:
+            for enemy in enemys:
+                if bullet.colliderect(enemy.actor):
+                    enemy.life -= 1
+                    if enemy.life <= 0:
+                        enemy.actor.image = 'boom'
+                    sounds.explode.play()
+                    hero.bullets.remove(bullet)
+                    score += 1
+    except ValueError:
+        return
 
 
 init()
