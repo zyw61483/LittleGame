@@ -43,9 +43,9 @@ def draw():
 
 def update():
     global end
-    end = hero.update(enemys)
     if end:
         return
+    end = hero.update(enemys)
     bg.update()
     for enemy in enemys:
         enemy.update()
